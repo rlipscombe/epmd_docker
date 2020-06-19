@@ -35,91 +35,11 @@ You can find a number of blog posts about doing Erlang distribution without epmd
 But epmd is working fine: it's running in the docker containers; I just need to subvert
 the host name resolution.
 
-The first thing we'll need is a "discovery module". It looks like this:
+## Compiling it
 
-```
--module(epmd_docker).
--export([start_link/0,
-         register_node/3,
-         names/1,
-         port_please/2,
-         address_please/3]).
+    make
 
-start_link() ->
-    ignore.
-
-register_node(_Name, _Port, _Family) ->
-    Creation = rand:uniform(3),
-    {ok, Creation}.
-
-names(_Host) ->
-    {error, address}.
-
-address_please(Name, Host, AddressFamily) ->
-    IP = get_container_ip(Host),
-    {ok, IP}.
-
-get_container_ip(Host) ->
-    % This should probably be made more robust.
-    Cmd = lists:flatten(
-            io_lib:format(
-              "docker inspect --format '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' ~s", [Host])),
-    Address = string:trim(os:cmd(Cmd)),
-    {ok, IPAddress} = inet:parse_address(Address),
-    IPAddress.
-
-port_please(Name, IP) ->
-    erl_epmd:port_please(Name, IP).
-```
-
-Somewhat annoyingly, `inet_tcp_dist` _also_ looks up the host in DNS, so we need
-to subvert that too:
-
-```
--module(epmd_docker_dist).
--export([listen/1, listen/2, address/0, accept/1, accept_connection/5, select/1, setup/5, close/1, childspecs/0]).
-
--define(MOD, inet_tcp_dist).
-
-listen(Name) ->
-    ?MOD:listen(Name).
-
-listen(Name, Host) ->
-    ?MOD:listen(Name, Host).
-
-address() ->
-    ?MOD:address().
-
-accept(Listen) ->
-    ?MOD:accept(Listen).
-
-accept_connection(AcceptPid, Socket, MyNode, Allowed, SetupTime) ->
-    ?MOD:accept_connection(AcceptPid, Socket, MyNode, Allowed, SetupTime).
-
-select(_Node) ->
-    % This is the subversive bit. OTP iterates over registered distribution
-    % modules, looking for the first one that says it can connect to the
-    % specified node. 'inet_tcp_dist' does a name lookup, which fails.
-    % We should probably check that the specified node is a docker container
-    % ID, but for now we'll lie and say we can deal with it.
-    true.
-
-setup(Node, Type, MyModule, LongOrShortNames, SetupTime) ->
-    ?MOD:setup(Node, Type, MyModule, LongOrShortNames, SetupTime).
-
-close(Listen) ->
-    ?MOD:close(Listen).
-
-childspecs() ->
-    ?MOD:childspecs().
-```
-
-And then we can try it out:
-
-```
-erlc -o ebin src/epmd_docker.erl
-erlc -o ebin src/epmd_docker_dist.erl
-```
+## Using it
 
 ```
 erl -pa ebin \
