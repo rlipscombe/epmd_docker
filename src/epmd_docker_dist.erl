@@ -18,12 +18,14 @@ accept(Listen) ->
 accept_connection(AcceptPid, Socket, MyNode, Allowed, SetupTime) ->
     ?MOD:accept_connection(AcceptPid, Socket, MyNode, Allowed, SetupTime).
 
+% This is the only interesting thing in here. By default, inet_tcp_dist does a DNS lookup to
+% decide whether or not to handle this traffic. But the point of this exercise is that DNS
+% lookups won't work. So we'll lie and say we *do* handle the traffic.
 select(_Node) ->
-    % @todo Is 'Node' a docker container or alias?
+    % @todo Is 'Node' *actually* a docker container or alias?
     true.
 
 setup(Node, Type, MyModule, LongOrShortNames, SetupTime) ->
-    io:format("setup ~p ~p ~p ~p ~p\n", [Node, Type, MyModule, LongOrShortNames, SetupTime]),
     ?MOD:setup(Node, Type, MyModule, LongOrShortNames, SetupTime).
 
 close(Listen) ->
