@@ -1,6 +1,9 @@
 -module(epmd_docker_dist).
 -export([listen/1, listen/2, address/0, accept/1, accept_connection/5, select/1, setup/5, close/1, childspecs/0]).
 
+% Assume TCP distribution. If you want to use TLS distribution (or something else),
+% either change this macro and recompile, or figure out how to parse the chosen
+% module from command-line arguments.
 -define(MOD, inet_tcp_dist).
 
 listen(Name) ->
