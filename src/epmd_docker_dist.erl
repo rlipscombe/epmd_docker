@@ -25,7 +25,7 @@ accept_connection(AcceptPid, Socket, MyNode, Allowed, SetupTime) ->
 % decide whether or not to handle this traffic. But the point of this exercise is that DNS
 % lookups won't work. So we'll lie and say we *do* handle the traffic.
 select(_Node) ->
-    % @todo Is 'Node' *actually* a docker container or alias?
+    % @todo Is 'Node' *actually* a docker container ID?
     true.
 
 setup(Node, Type, MyModule, LongOrShortNames, SetupTime) ->
