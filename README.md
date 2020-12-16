@@ -49,6 +49,12 @@ erl -pa ebin \
     -remsh node@$CONTAINER_ID
 ```
 
+Note: The node name that you connect to needs to match the node's own idea of its
+name. This means that if you're using hex-style container IDs as the container's
+hostname (this is the default), you _also_ need to use hex-style container IDs in
+`$CONTAINER_ID`. Using the container name will just give you the dreaded
+`*** ERROR: Shell process terminated! (^G to start new job) ***` message.
+
 ...or we can join the cluster (which allows us to run observer, etc.):
 
 ```
