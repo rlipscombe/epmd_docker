@@ -21,7 +21,7 @@ You can tell the host about the docker container IP addresses by:
 1. messing with `/etc/hosts` (which requires root access)
 2. or by specifying a custom inet configuration file (see http://erlang.org/pipermail/erlang-questions/2019-June/098036.html)
 
-The first two items are brittle, because you need to update that file every time
+Both of these are brittle, because you need to update that file every time
 your containers change their IP addresses.
 
 So I decided to subvert epmd instead.
