@@ -41,6 +41,8 @@ the host name resolution.
 
 ## Using it
 
+### Remote shell
+
 ```
 erl -pa ebin \
     -proto_dist epmd_docker \
@@ -55,7 +57,7 @@ hostname (this is the default), you _also_ need to use hex-style container IDs i
 `$CONTAINER_ID`. Using the container name will just give you the dreaded
 `*** ERROR: Shell process terminated! (^G to start new job) ***` message.
 
-...or we can join the cluster (which allows us to run observer, etc.):
+### Join the cluster
 
 ```
 erl -pa ebin \
