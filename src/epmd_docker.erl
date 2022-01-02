@@ -18,21 +18,21 @@ register_node(_Name, _Port, _Family) ->
     Creation = rand:uniform(3),
     {ok, Creation}.
 
-%%% Returns the names and associated port numbers of the Erlang nodes that epmd registered at the specified host.
-%%% Returns {error, address} if epmd is not operational.
+%% Returns the names and associated port numbers of the Erlang nodes that epmd registered at the specified host.
+%% Returns {error, address} if epmd is not operational.
 names(_Host) ->
     {error, address}.
 
-%%% Return the address of the given node.
-%%% The default implementation (see https://github.com/erlang/otp/blob/master/lib/kernel/src/erl_epmd.erl)
-%%% uses inet:getaddr, but that won't work because host DNS doesn't know anything about docker containers.
-%%% So we use the docker CLI to find the IP address for the given container name instead.
+%% Return the address of the given node.
+%% The default implementation (see https://github.com/erlang/otp/blob/master/lib/kernel/src/erl_epmd.erl)
+%% uses inet:getaddr, but that won't work because host DNS doesn't know anything about docker containers.
+%% So we use the docker CLI to find the IP address for the given container name instead.
 address_please(_Name, Host, _AddressFamily) ->
     IP = get_container_ip(Host),
     {ok, IP}.
 
-%%% Run "docker inspect" to find the IP address of the container.
-%%% OTP-19 has support for unix sockets, so we _might_ be able to persuade httpc to talk to the Docker engine directly.
+%% Run "docker inspect" to find the IP address of the container.
+%% OTP-19 has support for unix sockets, so we _might_ be able to persuade httpc to talk to the Docker engine directly.
 get_container_ip(Host) ->
     Cmd = lists:flatten(
             io_lib:format(
@@ -41,7 +41,7 @@ get_container_ip(Host) ->
     {ok, IPAddress} = inet:parse_address(Address),
     IPAddress.
 
-%%% Return the distribution port used by the given node.
-%%% Because we know that epmd is running on the other host, we can just use the default implementation.
+%% Return the distribution port used by the given node.
+%% Because we know that epmd is running on the other host, we can just use the default implementation.
 port_please(Name, IP) ->
     erl_epmd:port_please(Name, IP).
