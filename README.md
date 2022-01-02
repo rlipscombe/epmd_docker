@@ -45,7 +45,6 @@ the host name resolution.
 
 ```
 erl -pa ebin \
-    -proto_dist epmd_docker \
     -start_epmd false -epmd_module epmd_docker \
     -sname shell$$ -setcookie $COOKIE \
     -remsh node@$CONTAINER_ID
@@ -61,7 +60,6 @@ hostname (this is the default), you _also_ need to use hex-style container IDs i
 
 ```
 erl -pa ebin \
-    -proto_dist epmd_docker \
     -start_epmd false -epmd_module epmd_docker \
     -sname admin$$ -setcookie $COOKIE
 ```
